@@ -1,10 +1,18 @@
-/* ===== 유틸 ===== */
+/* ===================== 기본 설정/유틸 ===================== */
 const HEADER_OFFSET = 84;
-const tagLabel = (t)=>({move:"🚐 이동",stay:"🏨 숙소",food:"🍴 식사",sight:"📍 관광",free:"🧭 자유"}[t]||t);
-const pinColor = (c)=>({move:"#60a5fa",stay:"#f59e0b",food:"#ef4444",sight:"#10b981",free:"#a78bfa"}[c]||"#8b5cf6");
-const gmapsSearch = (q)=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+const daysEl  = document.getElementById('days');
+const linksEl = document.getElementById('dayLinks');
+
+const TAG_LABEL = { move:"🚐 이동", stay:"🏨 숙소", food:"🍴 식사", sight:"📍 관광", free:"🧭 자유" };
+const PIN_COLOR = { move:"#60a5fa", stay:"#f59e0b", food:"#ef4444", sight:"#10b981", free:"#a78bfa" };
+
+const tagLabel  = (t)=> TAG_LABEL[t] || t;
+const pinColor  = (c)=> PIN_COLOR[c] || "#8b5cf6";
+const gmapsSearch = (q)=> `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+
+/** 구글 지도에서 오늘 일정(출발-경유-도착) 바로 열기용 링크 생성 */
 function gmapsDayRoute(points){
-  const P = points.map(p=>p.g).filter(Boolean);
+  const P = (points||[]).map(p=>p.g).filter(Boolean);
   if(P.length===0) return '';
   if(P.length===1) return gmapsSearch(P[0]);
   const origin = encodeURIComponent(P[0]);
@@ -15,20 +23,17 @@ function gmapsDayRoute(points){
   return way ? `${base}&waypoints=${way}${mode}` : `${base}${mode}`;
 }
 
-/* ===== 전역 DOM ===== */
-const daysEl = document.getElementById('days');
-const linksEl = document.getElementById('dayLinks');
+/* ===================== 상태 ===================== */
+let PLAN = []; // schedule.json에서 로드
+const mapCache   = {}; // dayId -> L.Map
+const layerCache = {}; // dayId -> { groups, poly, bounds }
 
-/* ===== 상태 ===== */
-let PLAN = [];                 // schedule.json으로부터 로드
-const mapCache = {};           // dayId -> L.Map
-const layerCache = {};         // dayId -> { groups, poly, bounds }
-
-/* ===== 렌더 ===== */
+/* ===================== 렌더 ===================== */
 function makeItemHTML(it, day){
+  // 개별 장소 "📍 지도" 버튼 만들기: 1) poi 2) (괄호) 3) day.map 매칭
   let q = it.poi || '';
   if(!q){
-    const m = it.text.match(/\(([^)]+)\)/);
+    const m = (it.text||'').match(/\(([^)]+)\)/);
     if(m) q = m[1];
   }
   if(!q && day.map && day.map.length){
@@ -43,43 +48,47 @@ function makeItemHTML(it, day){
   return `
     <div class="item ${it.type}">
       <div class="time">${it.time||""}</div>
-      <div class="desc">${it.text}${btn}</div>
+      <div class="desc">${it.text||""}${btn}</div>
       <div class="tag">${tagLabel(it.type)}</div>
     </div>`;
 }
 
+/** 날짜 카드(지도 툴바 포함) */
 function makeDayCard(d, idx){
   const el = document.createElement('section');
   el.className = 'day'; el.id = d.id;
 
-  // 오늘 하이라이트(브라우저 날짜 기준) — 원본 로직 준용
+  // 오늘 표시(브라우저 날짜 기준) — 필요 없으면 제거 가능
   const t = new Date();
-  if(t.getFullYear()===2025 && (t.getMonth()+1)===10 && t.getDate()===(4+idx)) el.classList.add('is-today');
+  if(t.getFullYear()===2025 && (t.getMonth()+1)===10 && t.getDate()===(4+idx)){
+    el.classList.add('is-today');
+  }
 
   const itemsHTML = (d.items||[]).map(it=>makeItemHTML(it, d)).join('');
 
-  const mapSection = `
+  // 좌표가 1개 이상 있을 때만 지도 섹션/버튼을 노출(빈 지도 제거)
+  const hasMap = Array.isArray(d.map) && d.map.some(p => Number.isFinite(p.lat) && Number.isFinite(p.lng));
+
+  const mapSection = hasMap ? `
     <div class="mapwrap">
       <div class="map-toolbar">
         <button class="map-btn" data-map-toggle="${d.id}">🗺️ 오늘 지도 보기</button>
-        ${(d.map && d.map.length) ? `
-          <a class="map-btn" target="_blank" rel="noopener" href="${gmapsDayRoute(d.map)}">🧭 Google 지도에서 오늘 일정 보기</a>
-          <button class="map-btn" data-fit="${d.id}">🔎 루트 맞춰 보기</button>
-          <span style="flex:1"></span>
-          <button class="map-btn" data-map-filter="${d.id}" data-cat="sight">📍 관광</button>
-          <button class="map-btn" data-map-filter="${d.id}" data-cat="food">🍴 식사</button>
-          <button class="map-btn" data-map-filter="${d.id}" data-cat="stay">🏨 숙소</button>
-          <button class="map-btn" data-map-filter="${d.id}" data-cat="move">🚐 이동</button>
-        ` : "" }
+        <a class="map-btn" target="_blank" rel="noopener" href="${gmapsDayRoute(d.map)}">🧭 Google 지도에서 오늘 일정 보기</a>
+        <button class="map-btn" data-fit="${d.id}">🔎 화면을 경로에 맞추기</button>
+        <span style="flex:1"></span>
+        <button class="map-btn" data-map-filter="${d.id}" data-cat="sight">📍 관광</button>
+        <button class="map-btn" data-map-filter="${d.id}" data-cat="food">🍴 식사</button>
+        <button class="map-btn" data-map-filter="${d.id}" data-cat="stay">🏨 숙소</button>
+        <button class="map-btn" data-map-filter="${d.id}" data-cat="move">🚐 이동</button>
       </div>
       <div class="map" id="map-${d.id}" style="display:none"></div>
-    </div>`;
+    </div>` : '';
 
   el.innerHTML = `
     <div class="dayheader">
       <div>
-        <div class="daytitle">${d.date}</div>
-        <div class="subtitle">${d.title}</div>
+        <div class="daytitle">${d.date||""}</div>
+        <div class="subtitle">${d.title||""}</div>
       </div>
       <span class="today-badge">오늘 일정</span>
     </div>
@@ -94,9 +103,11 @@ function makeDayCard(d, idx){
 }
 
 function renderAll(){
+  // 본문
   daysEl.innerHTML = '';
   PLAN.forEach((d,idx)=> daysEl.appendChild(makeDayCard(d, idx)));
 
+  // 좌측 네비
   linksEl.innerHTML = '';
   PLAN.forEach((d)=>{
     const a = document.createElement('a');
@@ -109,9 +120,10 @@ function renderAll(){
   });
 }
 
-/* ===== 지도 ===== */
+/* ===================== 지도 ===================== */
 function initMap(dayId){
-  if(mapCache[dayId]) return; // 1회 생성
+  if(mapCache[dayId]) return; // 이미 생성됨
+
   const day = PLAN.find(d=>d.id===dayId);
   const mapEl = document.getElementById('map-'+dayId);
   const map = L.map(mapEl,{zoomControl:true});
@@ -128,6 +140,7 @@ function initMap(dayId){
     move:L.layerGroup().addTo(map),
     free:L.layerGroup().addTo(map)
   };
+
   const latlngs = [];
   const bounds = [];
   (day.map||[]).forEach(p=>{
@@ -143,45 +156,60 @@ function initMap(dayId){
     latlngs.push([p.lat,p.lng]); bounds.push([p.lat,p.lng]);
   });
 
-  let poly=null;
+  // 점선 루트(순서대로 연결)
   if(latlngs.length>=2){
-    poly = L.polyline(latlngs, {color:'#8b5cf6', weight:3, opacity:.7, dashArray:'6 8'}).addTo(map);
+    L.polyline(latlngs, {color:'#8b5cf6', weight:3, opacity:.7, dashArray:'6 8'}).addTo(map);
   }
-  if(bounds.length) map.fitBounds(bounds,{padding:[20,20]}); else map.setView([10.775,106.7],12);
+
+  if(bounds.length) map.fitBounds(bounds,{padding:[20,20]});
+  else map.setView([10.775,106.7],12); // 기본(호치민 근처)
+
+  // 첫 표시 때 레이아웃 보정
   setTimeout(()=>map.invalidateSize(),0);
 
-  layerCache[dayId] = {groups, poly, bounds};
+  layerCache[dayId] = { groups, bounds };
 }
 
-/* ===== 이벤트 위임 ===== */
+/* ===================== 이벤트(위임) ===================== */
 document.addEventListener('click', (e)=>{
-  // 지도 토글
+  // 오늘 지도 보기: 열자마자 init + 경로맞춤
   const t1 = e.target.closest('[data-map-toggle]');
   if(t1){
     const id = t1.getAttribute('data-map-toggle');
     const box = document.getElementById('map-'+id);
     const isOpen = box.style.display !== 'none';
     box.style.display = isOpen ? 'none' : 'block';
-    if(!isOpen) initMap(id);
+    if(!isOpen){
+      initMap(id);
+      const Ls = layerCache[id];
+      if(Ls && Ls.bounds && Ls.bounds.length){
+        mapCache[id].fitBounds(Ls.bounds, {padding:[20,20]});
+      }
+    }
     return;
   }
-  // 루트 맞춰 보기(경로 bounds로 맞춤)
+
+  // 화면을 경로에 맞추기(기존 ‘루트 맞춰 보기’ 기능과 동일)
   const t2 = e.target.closest('[data-fit]');
   if(t2){
     const id = t2.getAttribute('data-fit');
     const box = document.getElementById('map-'+id);
     if(box.style.display==='none'){ box.style.display='block'; initMap(id); }
-    const map = mapCache[id]; const Ls = layerCache[id];
-    if(map && Ls && Ls.bounds && Ls.bounds.length){ map.fitBounds(Ls.bounds, {padding:[20,20]}); }
+    const Ls = layerCache[id];
+    if(Ls && Ls.bounds && Ls.bounds.length){
+      mapCache[id].fitBounds(Ls.bounds, {padding:[20,20]});
+    }
     return;
   }
-  // 카테고리 토글(지도 마커 on/off)
+
+  // 카테고리 토글(마커 레이어 on/off)
   const t3 = e.target.closest('[data-map-filter]');
   if(t3){
-    const id = t3.getAttribute('data-map-filter');
+    const id  = t3.getAttribute('data-map-filter');
     const cat = t3.getAttribute('data-cat');
     initMap(id);
-    const map = mapCache[id]; const Ls = layerCache[id];
+    const map = mapCache[id];
+    const Ls  = layerCache[id];
     const grp = Ls?.groups?.[cat];
     if(map && grp){
       if(map.hasLayer(grp)){ map.removeLayer(grp); t3.style.opacity=.5; }
@@ -191,7 +219,7 @@ document.addEventListener('click', (e)=>{
   }
 });
 
-/* ===== 상단 리스트 필터(텍스트 섹션) ===== */
+/* ===================== 상단 리스트 필터(텍스트 섹션) ===================== */
 document.addEventListener('change', (e)=>{
   const cb = e.target.closest('[data-filter]'); if(!cb) return;
   const on={}; document.querySelectorAll('[data-filter]').forEach(c=> on[c.dataset.filter]=c.checked);
@@ -201,7 +229,7 @@ document.addEventListener('change', (e)=>{
   });
 });
 
-/* ===== 네비 활성화 정확도 개선 ===== */
+/* ===================== 네비 활성화(스크롤 스파이) ===================== */
 function setActiveById(id){
   [...document.querySelectorAll('#dayLinks .daylink')]
     .forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+id));
@@ -211,7 +239,7 @@ function updateActive(){
   if(!sections.length) return;
 
   const scrollBottom = window.scrollY + window.innerHeight;
-  const docBottom = document.documentElement.scrollHeight;
+  const docBottom    = document.documentElement.scrollHeight;
   if (scrollBottom >= docBottom - 2){ setActiveById(sections.at(-1).id); return; }
 
   const anchorY = window.scrollY + HEADER_OFFSET + (window.innerHeight * 0.30);
@@ -231,22 +259,20 @@ function setupNav(){
   });
 }
 
-/* ===== 부팅: schedule.json 로드 후 렌더 ===== */
+/* ===================== 부팅: schedule.json 로드 후 렌더 ===================== */
 async function boot(){
   try{
     const res = await fetch('./schedule.json', {cache:'no-store'});
     if(!res.ok) throw new Error('schedule.json 불러오기 실패');
     const data = await res.json();
+    // 배열 또는 {days:[]} 둘 다 지원
     PLAN = Array.isArray(data) ? data : (data.days || []);
   }catch(err){
     console.warn('schedule.json 로드 실패 → 빈 계획으로 진행', err);
-    PLAN = []; // 안전모드
+    PLAN = [];
   }
 
-  // 렌더
   renderAll();
-
-  // 네비 & 스크롤 스파이
   setupNav(); updateActive();
   let ticking=false;
   window.addEventListener('scroll',()=>{ if(!ticking){ requestAnimationFrame(()=>{ updateActive(); ticking=false; }); ticking=true; }},{passive:true});

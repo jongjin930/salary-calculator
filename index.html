@@ -4,11 +4,12 @@
   <meta charset="utf-8" />
   <title>2025 베트남 가족여행 대시보드 (10/4~10/11)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- 검색 노출 방지(요청 이력 반영) -->
   <meta name="robots" content="noindex, nofollow">
-  <!-- Leaflet -->
+
+  <!-- Leaflet (내부 지도용 / 무료, API키 불필요) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin />
-  <!-- 외부 스타일 -->
+
+  <!-- 기존 스타일을 그대로 사용 (여기에 본인이 쓰던 style.css 경로) -->
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -48,9 +49,11 @@
     </main>
   </div>
 
-  <!-- Leaflet -->
+  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin></script>
-  <!-- 외부 스크립트 -->
+  <!-- 앱 스크립트 -->
   <script src="./script.js" defer></script>
+
+  <!-- 주의: Google Maps JavaScript API 스크립트는 사용하지 않습니다(불필요/비용 방지). -->
 </body>
 </html>
