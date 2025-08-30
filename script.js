@@ -1,134 +1,163 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // 모드 전환
-  document.getElementById('btn-simple').addEventListener('click', () => switchMode('simple'));
-  document.getElementById('btn-detailed').addEventListener('click', () => switchMode('detailed'));
+// Asia/Seoul 기준 오늘 날짜 문자열 만들기 (YYYY-MM-DD)
+function todayKST() {
+  const now = new Date();
+  const utc = now.getTime() + (now.getTimezoneOffset()*60000);
+  // Asia/Seoul = UTC+9
+  const kst = new Date(utc + 9*60*60000);
+  return kst.toISOString().slice(0,10);
+}
 
-  // 계산 버튼
-  document.getElementById('calc-simple').addEventListener('click', () => {
-    clearErrors();
-    const inc = parseNumber('simple-income');
-    if (!validateIncome(inc, 'error-simple-income')) return;
-    const fam = parseIntOr('simple-family', 1);
-    const chi = parseIntOr('simple-children', 0);
-    calculate(inc, 0, fam, chi);
-  });
-  document.getElementById('calc-detailed').addEventListener('click', () => {
-    clearErrors();
-    const inc = parseNumber('detailed-income');
-    if (!validateIncome(inc, 'error-detailed-income')) return;
-    const nox = parseNumber('detailed-nontax');
-    const fam = parseIntOr('detailed-family', 1);
-    const chi = parseIntOr('detailed-children', 0);
-    calculate(inc, nox, fam, chi);
-  });
+// 상태
+let DATA = null;
+let activeTypes = new Set(["이동","숙소","식사","관광","기타"]);
+let today = todayKST();
 
-  // 천 단위 콤마 처리
-  document.querySelectorAll('input.thousands').forEach(input => {
-    input.addEventListener('input', e => {
-      let v = e.target.value.replace(/,/g, '').replace(/[^\d]/g, '');
-      e.target.value = v ? parseInt(v, 10).toLocaleString() : '';
-    });
-  });
+// 초기화
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadJSON();
+  buildDates();
+  buildDays();
+  bindFilters();
+  bindTodayBtn();
+  updateTripDates();
+  // 최초 활성화: 오늘 or 1일차
+  scrollToTodayOrFirst();
+  // 스크롤스파이
+  window.addEventListener('scroll', onScrollSpy, {passive:true});
+  window.addEventListener('resize', onScrollSpy);
 });
 
-// 모드 전환 함수
-function switchMode(mode) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById(`section-${mode}`).classList.add('active');
-  document.querySelectorAll('.mode-switch button').forEach(b => b.classList.remove('active'));
-  document.getElementById(`btn-${mode}`).classList.add('active');
-  document.getElementById('result').classList.add('hidden');
-}
-
-// 숫자 파싱
-function parseNumber(id) {
-  const v = document.getElementById(id).value.replace(/,/g, '');
-  return v ? parseInt(v, 10) : 0;
-}
-function parseIntOr(id, def) {
-  const v = parseInt(document.getElementById(id).value, 10);
-  return isNaN(v) ? def : v;
-}
-
-// 입력 검증
-function validateIncome(val, errId) {
-  if (val <= 0) {
-    document.getElementById(errId).innerText = '월 총급여를 올바르게 입력하세요.';
-    return false;
+// JSON 로드
+async function loadJSON(){
+  const res = await fetch('schedule.json', {cache:'no-store'});
+  DATA = await res.json();
+  // 안전장치
+  if(!Array.isArray(DATA.days)) DATA.days = [];
+  // 아이템 정렬(시간 오름차순)
+  for(const d of DATA.days){
+    d.items?.sort((a,b) => (a.time||'').localeCompare(b.time||''));
   }
-  return true;
-}
-function clearErrors() {
-  document.querySelectorAll('.error').forEach(e => e.innerText = '');
 }
 
-// 계산 함수
-function calculate(income, nonTax, family, children) {
-  // 체크박스/선택값
-  const chkP = document.getElementById('chk-pension').checked;
-  const chkH = document.getElementById('chk-health').checked;
-  const chkC = document.getElementById('chk-care').checked;
-  const chkE = document.getElementById('chk-emp').checked;
-  const isDisabled = document.getElementById('chk-disabled').checked;
-  const region = document.getElementById('sel-region').value;
+// 날짜 네비 생성
+function buildDates(){
+  const nav = document.getElementById('dayNav');
+  nav.innerHTML = '';
+  DATA.days.forEach((d, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'nav-btn';
+    btn.dataset.target = `day-${idx+1}`;
+    btn.innerHTML = `
+      <strong>D${idx+1}. ${d.label || d.date || '무제'}</strong>
+      <span class="small">${d.date || ''}${d.city ? ' · '+d.city : ''}</span>
+    `;
+    btn.addEventListener('click', () => {
+      document.getElementById(`day-${idx+1}`)?.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+    nav.appendChild(btn);
+  });
+}
 
-  const taxable = Math.max(0, income - nonTax);
+// 메인 카드 렌더
+function buildDays(){
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  DATA.days.forEach((d, idx) => {
+    const sec = document.createElement('section');
+    sec.className = 'day-card';
+    sec.id = `day-${idx+1}`;
+    if(d.date === today) sec.classList.add('today');
+    sec.innerHTML = `
+      <div class="day-head">
+        <div class="day-title">D${idx+1}. ${d.label || d.date || '무제'}</div>
+        <div class="day-meta">${[d.date, d.city].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div class="items"></div>
+    `;
+    const wrap = sec.querySelector('.items');
+    (d.items||[]).forEach(item => {
+      const visible = activeTypes.has(item.type||'기타');
+      const el = document.createElement('article');
+      el.className = 'item';
+      el.dataset.type = item.type || '기타';
+      el.style.display = visible ? '' : 'none';
+      el.innerHTML = `
+        <div class="time">${item.time || ''}</div>
+        <div class="content">
+          <div class="row">
+            <span class="badge" data-type="${item.type||'기타'}">${item.type||'기타'}</span>
+            <span class="title">${item.title || ''}</span>
+          </div>
+          <div class="meta">
+            ${item.location ? `📍 ${item.location}` : ''}
+            ${item.duration ? ` · ⏱ ${item.duration}` : ''}
+            ${item.cost ? ` · 💵 ${item.cost}` : ''}
+            ${item.kidFriendly ? ` · 👶 어린이 무리없음` : ''}
+          </div>
+          <div class="row">
+            ${item.mapLink ? `<a class="map" href="${item.mapLink}" target="_blank" rel="noreferrer">지도 열기</a>` : ''}
+            ${item.note ? `<span class="meta"> · ${item.note}</span>` : ''}
+          </div>
+        </div>
+      `;
+      wrap.appendChild(el);
+    });
 
-  // 4대 보험
-  let pension = chkP && !isDisabled && region==='직장가입자'
-    ? Math.floor(Math.min(Math.max(taxable, 390000), 6170000) * 0.045)
-    : 0;
-  let health = chkH ? Math.floor(taxable * 0.03545) : 0;
-  let care   = chkC ? Math.floor(health * 0.1295) : 0;
-  let emp    = (chkE && region==='직장가입자') ? Math.floor(taxable * 0.009) : 0;
+    app.appendChild(sec);
+  });
+}
 
-  // 소득세 계산 (연간 → 월)
-  const annIn = taxable * 12;
-  let ded = 0;
-  if (annIn <= 5000000) ded = annIn * 0.7;
-  else if (annIn <= 15000000) ded = 3500000 + (annIn - 5000000) * 0.4;
-  else if (annIn <= 45000000) ded = 7500000 + (annIn - 15000000) * 0.15;
-  else if (annIn <= 100000000) ded = 12000000 + (annIn - 45000000) * 0.05;
-  else ded = 14750000 + (annIn - 100000000) * 0.02;
+// 필터 바인딩
+function bindFilters(){
+  document.querySelectorAll('.filters input[type="checkbox"]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const t = cb.dataset.type;
+      if(cb.checked) activeTypes.add(t); else activeTypes.delete(t);
+      // 표시 갱신
+      document.querySelectorAll('.item').forEach(it=>{
+        const show = activeTypes.has(it.dataset.type);
+        it.style.display = show ? '' : 'none';
+      });
+    });
+  });
+}
 
-  const pers = (family + 1) * 1500000;
-  const baseTax = Math.max(0, annIn - Math.floor(ded) - pers);
+// 오늘 버튼
+function bindTodayBtn(){
+  document.getElementById('todayBtn')?.addEventListener('click', scrollToTodayOrFirst);
+}
 
-  function bracket(b) {
-    if (b <= 14000000) return b * 0.06;
-    if (b <= 50000000) return b * 0.15 - 1260000;
-    if (b <= 88000000) return b * 0.24 - 5760000;
-    if (b <= 150000000) return b * 0.35 - 15440000;
-    if (b <= 300000000) return b * 0.38 - 19940000;
-    if (b <= 500000000) return b * 0.40 - 25940000;
-    if (b <= 1000000000) return b * 0.42 - 35940000;
-    return b * 0.45 - 65940000;
+function scrollToTodayOrFirst(){
+  const todayEl = [...document.querySelectorAll('.day-card')].find(sec=>sec.classList.contains('today'));
+  (todayEl || document.querySelector('.day-card'))?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// 상단 날짜 표시
+function updateTripDates(){
+  const el = document.getElementById('tripDates');
+  const dates = DATA.days.map(d=>d.date).filter(Boolean);
+  if(dates.length){
+    el.textContent = `${dates[0]} ~ ${dates[dates.length-1]} (${DATA.days.length}일)`;
+  }else{
+    el.textContent = '날짜 미정';
   }
+}
 
-  let annTax = bracket(baseTax);
-
-  // 자녀 세액공제 (연간)
-  let credit = 0;
-  if (children === 1) credit = 250000;
-  else if (children === 2) credit = 250000 + 300000;
-  else if (children >= 3) credit = 250000 + 300000 + (children - 2) * 400000;
-  annTax = Math.max(0, annTax - credit);
-
-  const incTax = Math.floor(annTax / 12);
-  const locTax = Math.floor(incTax * 0.1);
-
-  // 실수령액
-  const totalDed = pension + health + care + emp + incTax + locTax;
-  const net = income - totalDed;
-
-  // 결과 표시
-  document.getElementById('result').classList.remove('hidden');
-  document.getElementById('resPension').innerText    = pension.toLocaleString();
-  document.getElementById('resHealth').innerText     = health.toLocaleString();
-  document.getElementById('resCare').innerText       = care.toLocaleString();
-  document.getElementById('resEmp').innerText        = emp.toLocaleString();
-  document.getElementById('resIncomeTax').innerText  = incTax.toLocaleString();
-  document.getElementById('resLocalTax').innerText   = locTax.toLocaleString();
-  document.getElementById('resChildCredit').innerText= Math.floor(credit/12).toLocaleString();
-  document.getElementById('resNet').innerText        = net.toLocaleString();
+// 스크롤 스파이로 좌측 활성화 갱신
+let ticking=false;
+function onScrollSpy(){
+  if(ticking) return;
+  window.requestAnimationFrame(()=>{
+    const cards = [...document.querySelectorAll('.day-card')];
+    let activeId = '';
+    const y = window.scrollY + 110; // 상단바 여유
+    for(const c of cards){
+      if(c.offsetTop <= y) activeId = c.id;
+    }
+    document.querySelectorAll('.nav-btn').forEach(btn=>{
+      btn.classList.toggle('active', btn.dataset.target === activeId);
+    });
+    ticking=false;
+  });
+  ticking=true;
 }

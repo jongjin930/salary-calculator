@@ -1,0 +1,162 @@
+{
+  "days": [
+    {
+      "date": "2025-10-04",
+      "label": "입국 & 체크인",
+      "city": "호치민",
+      "items": [
+        {
+          "time": "08:50",
+          "type": "이동",
+          "title": "인천공항 출발",
+          "location": "ICN T2",
+          "duration": "6h 0m",
+            "note": "수속 여유 2시간",
+          "kidFriendly": true
+        },
+        {
+          "time": "13:00",
+          "type": "이동",
+          "title": "탄손낫 공항 도착 → 숙소 이동",
+          "location": "SGN → 1군 호텔",
+          "duration": "40m",
+          "mapLink": "https://maps.google.com/?q=Tan+Son+Nhat+to+District+1+Hotel",
+          "kidFriendly": true
+        },
+        {
+          "time": "15:00",
+          "type": "숙소",
+          "title": "체크인 & 휴식",
+          "location": "패밀리룸 2개",
+          "note": "2가족 분리 배정"
+        },
+        {
+          "time": "18:30",
+          "type": "식사",
+          "title": "저녁",
+          "location": "현지 음식점",
+          "mapLink": "https://maps.google.com/?q=Ho+Chi+Minh+restaurant",
+          "kidFriendly": true
+        },
+        {
+          "time": "20:00",
+          "type": "관광",
+          "title": "야시장 산책",
+          "location": "벤탄 야시장",
+          "mapLink": "https://maps.google.com/?q=Ben+Thanh+Night+Market",
+          "duration": "1h 30m",
+          "kidFriendly": true
+        }
+      ]
+    },
+    {
+      "date": "2025-10-05",
+      "label": "무이네 이동",
+      "city": "무이네",
+      "items": [
+        {
+          "time": "08:00",
+          "type": "이동",
+          "title": "호치민 → 판티엣/무이네 버스",
+          "location": "버스 탑승",
+          "duration": "4h 30m",
+          "note": "셔틀 여부 사전 확인",
+          "kidFriendly": true
+        },
+        {
+          "time": "13:00",
+          "type": "숙소",
+          "title": "리조트 체크인 & 휴식",
+          "location": "무이네 비치 리조트"
+        },
+        {
+          "time": "18:00",
+          "type": "식사",
+          "title": "리조트 인근 저녁",
+          "location": "해산물 레스토랑",
+          "mapLink": "https://maps.google.com/?q=Mui+Ne+seafood",
+          "kidFriendly": true
+        }
+      ]
+    },
+    {
+      "date": "2025-10-06",
+      "label": "사막 헌팅투어",
+      "city": "무이네",
+      "items": [
+        {
+          "time": "04:30",
+          "type": "관광",
+          "title": "일출 투어(화이트샌드)",
+          "location": "지프 투어",
+          "duration": "4h",
+          "note": "모래썰매 포함 여부 확인",
+          "kidFriendly": true
+        },
+        {
+          "time": "11:30",
+          "type": "식사",
+          "title": "점심",
+          "location": "현지 식당",
+          "kidFriendly": true
+        },
+        {
+          "time": "15:00",
+          "type": "관광",
+          "title": "요정의 샘 / 해변 산책",
+          "location": "Fairy Stream",
+          "mapLink": "https://maps.google.com/?q=Fairy+Stream+Mui+Ne",
+          "kidFriendly": true
+        }
+      ]
+    },
+    {
+      "date": "2025-10-07",
+      "label": "리조트 휴식 + 자유일정",
+      "city": "무이네",
+      "items": [
+        {
+          "time": "09:00",
+          "type": "숙소",
+          "title": "수영장/스파",
+          "location": "리조트",
+          "kidFriendly": true
+        },
+        {
+          "time": "18:30",
+          "type": "식사",
+          "title": "선셋 디너",
+          "location": "비치 레스토랑",
+          "kidFriendly": true
+        }
+      ]
+    },
+    {
+      "date": "2025-10-08",
+      "label": "호치민 복귀",
+      "city": "호치민",
+      "items": [
+        {
+          "time": "09:30",
+          "type": "이동",
+          "title": "무이네 → 호치민(슬리핑 버스 가정)",
+          "duration": "5h 0m",
+          "kidFriendly": true
+        },
+        {
+          "time": "15:30",
+          "type": "숙소",
+          "title": "1군 호텔 체크인",
+          "location": "패밀리룸 2개"
+        },
+        {
+          "time": "19:00",
+          "type": "관광",
+          "title": "사이공 스카이덱",
+          "mapLink": "https://maps.google.com/?q=Saigon+Skydeck",
+          "kidFriendly": true
+        }
+      ]
+    }
+  ]
+}
