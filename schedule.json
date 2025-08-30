@@ -1,162 +1,161 @@
-{
-  "days": [
-    {
-      "date": "2025-10-04",
-      "label": "입국 & 체크인",
-      "city": "호치민",
-      "items": [
-        {
-          "time": "08:50",
-          "type": "이동",
-          "title": "인천공항 출발",
-          "location": "ICN T2",
-          "duration": "6h 0m",
-            "note": "수속 여유 2시간",
-          "kidFriendly": true
-        },
-        {
-          "time": "13:00",
-          "type": "이동",
-          "title": "탄손낫 공항 도착 → 숙소 이동",
-          "location": "SGN → 1군 호텔",
-          "duration": "40m",
-          "mapLink": "https://maps.google.com/?q=Tan+Son+Nhat+to+District+1+Hotel",
-          "kidFriendly": true
-        },
-        {
-          "time": "15:00",
-          "type": "숙소",
-          "title": "체크인 & 휴식",
-          "location": "패밀리룸 2개",
-          "note": "2가족 분리 배정"
-        },
-        {
-          "time": "18:30",
-          "type": "식사",
-          "title": "저녁",
-          "location": "현지 음식점",
-          "mapLink": "https://maps.google.com/?q=Ho+Chi+Minh+restaurant",
-          "kidFriendly": true
-        },
-        {
-          "time": "20:00",
-          "type": "관광",
-          "title": "야시장 산책",
-          "location": "벤탄 야시장",
-          "mapLink": "https://maps.google.com/?q=Ben+Thanh+Night+Market",
-          "duration": "1h 30m",
-          "kidFriendly": true
-        }
-      ]
-    },
-    {
-      "date": "2025-10-05",
-      "label": "무이네 이동",
-      "city": "무이네",
-      "items": [
-        {
-          "time": "08:00",
-          "type": "이동",
-          "title": "호치민 → 판티엣/무이네 버스",
-          "location": "버스 탑승",
-          "duration": "4h 30m",
-          "note": "셔틀 여부 사전 확인",
-          "kidFriendly": true
-        },
-        {
-          "time": "13:00",
-          "type": "숙소",
-          "title": "리조트 체크인 & 휴식",
-          "location": "무이네 비치 리조트"
-        },
-        {
-          "time": "18:00",
-          "type": "식사",
-          "title": "리조트 인근 저녁",
-          "location": "해산물 레스토랑",
-          "mapLink": "https://maps.google.com/?q=Mui+Ne+seafood",
-          "kidFriendly": true
-        }
-      ]
-    },
-    {
-      "date": "2025-10-06",
-      "label": "사막 헌팅투어",
-      "city": "무이네",
-      "items": [
-        {
-          "time": "04:30",
-          "type": "관광",
-          "title": "일출 투어(화이트샌드)",
-          "location": "지프 투어",
-          "duration": "4h",
-          "note": "모래썰매 포함 여부 확인",
-          "kidFriendly": true
-        },
-        {
-          "time": "11:30",
-          "type": "식사",
-          "title": "점심",
-          "location": "현지 식당",
-          "kidFriendly": true
-        },
-        {
-          "time": "15:00",
-          "type": "관광",
-          "title": "요정의 샘 / 해변 산책",
-          "location": "Fairy Stream",
-          "mapLink": "https://maps.google.com/?q=Fairy+Stream+Mui+Ne",
-          "kidFriendly": true
-        }
-      ]
-    },
-    {
-      "date": "2025-10-07",
-      "label": "리조트 휴식 + 자유일정",
-      "city": "무이네",
-      "items": [
-        {
-          "time": "09:00",
-          "type": "숙소",
-          "title": "수영장/스파",
-          "location": "리조트",
-          "kidFriendly": true
-        },
-        {
-          "time": "18:30",
-          "type": "식사",
-          "title": "선셋 디너",
-          "location": "비치 레스토랑",
-          "kidFriendly": true
-        }
-      ]
-    },
-    {
-      "date": "2025-10-08",
-      "label": "호치민 복귀",
-      "city": "호치민",
-      "items": [
-        {
-          "time": "09:30",
-          "type": "이동",
-          "title": "무이네 → 호치민(슬리핑 버스 가정)",
-          "duration": "5h 0m",
-          "kidFriendly": true
-        },
-        {
-          "time": "15:30",
-          "type": "숙소",
-          "title": "1군 호텔 체크인",
-          "location": "패밀리룸 2개"
-        },
-        {
-          "time": "19:00",
-          "type": "관광",
-          "title": "사이공 스카이덱",
-          "mapLink": "https://maps.google.com/?q=Saigon+Skydeck",
-          "kidFriendly": true
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "id": "d1",
+    "date": "10월 4일 (토)",
+    "title": "인천 ✈ 호치민 → 달랏",
+    "items": [
+      {"time":"19:25","type":"move","text":"인천 출발 (OZ735)","poi":"Incheon International Airport Terminal 1"},
+      {"time":"22:45","type":"move","text":"호치민 도착 (Sân bay Tân Sơn Nhất)","poi":"Tan Son Nhat International Airport"},
+      {"time":"","type":"move","text":"택시로 New Eastern Bus Terminal (Bến xe Miền Đông Mới) 이동","poi":"Bến xe Miền Đông Mới"},
+      {"time":"01:30","type":"move","text":"FUTA 슬리핑버스 (호치민 → 달랏)","poi":"FUTA Bus Lines Ben Xe Mien Dong Moi"}
+    ],
+    "point": "본격 여행 시작, 첫날은 이동에 집중. 공항-버스 무료 셔틀 이용으로 편리함.",
+    "prep": "버스에서 덮을 담요, 간단 간식.",
+    "map": [
+      {"name":"Tan Son Nhat International Airport","cat":"move","lat":10.8185,"lng":106.6580,"g":"Tan Son Nhat International Airport"},
+      {"name":"New Eastern Bus Terminal","cat":"move","lat":10.8308,"lng":106.8022,"g":"Bến xe Miền Đông Mới"}
+    ]
+  },
+  {
+    "id": "d2",
+    "date": "10월 5일 (일)",
+    "title": "달랏 시내 산책 & 야시장",
+    "items": [
+      {"time":"06:30","type":"move","text":"달랏 도착 → 숙소 짐 보관","poi":"Dalat Palace Heritage Hotel"},
+      {"time":"08:30","type":"food","text":"아침/브런치: 리엔 호아 베이커리 (Lien Hoa Bakery)","poi":"Lien Hoa Bakery Dalat"},
+      {"time":"10:00","type":"sight","text":"쑤언흐엉 호수 (Hồ Xuân Hương)","poi":"Hồ Xuân Hương Đà Lạt"},
+      {"time":"12:30","type":"food","text":"점심: 쫑동 레스토랑 (Trống Đồng)","poi":"Trống Đồng Đà Lạt"},
+      {"time":"14:00","type":"stay","text":"숙소 체크인 & 휴식 — 달랏 팰리스 헤리티지 호텔","poi":"Dalat Palace Heritage Hotel"},
+      {"time":"17:00","type":"sight","text":"달랏 야시장 (Chợ đêm Đà Lạt)","poi":"Dalat Night Market"}
+    ],
+    "point":"호수·야시장으로 달랏 첫인상 느끼기.",
+    "prep":"내일 새벽 클라우드 헌팅 대비 방한 준비.",
+    "map":[
+      {"name":"Lien Hoa Bakery","cat":"food","lat":11.9459,"lng":108.4379,"g":"Lien Hoa Bakery Dalat"},
+      {"name":"Ho Xuan Huong Lake","cat":"sight","lat":11.9464,"lng":108.4412,"g":"Hồ Xuân Hương Đà Lạt"},
+      {"name":"Trong Dong Restaurant","cat":"food","lat":11.9439,"lng":108.4418,"g":"Trống Đồng Đà Lạt"},
+      {"name":"Dalat Palace Heritage Hotel","cat":"stay","lat":11.9446,"lng":108.4387,"g":"Dalat Palace Heritage Hotel"},
+      {"name":"Dalat Night Market","cat":"sight","lat":11.9469,"lng":108.4360,"g":"Chợ đêm Đà Lạt"}
+    ]
+  },
+  {
+    "id": "d3",
+    "date": "10월 6일 (월)",
+    "title": "클라우드 헌팅 & 카페 감성",
+    "items": [
+      {"time":"04:30","type":"sight","text":"클라우드 헌팅 (Cầu Đất 차밭, Langbiang)","poi":"Cau Dat Tea Hill"},
+      {"time":"09:00","type":"food","text":"복귀 후 조식","poi":"Dalat Palace Heritage Hotel Restaurant"},
+      {"time":"10:30","type":"sight","text":"카페 투어: 안 카페 (An Café)","poi":"An Cafe Da Lat"},
+      {"time":"13:00","type":"food","text":"점심: 르 샬레 달랏 (Le Chalet Dalat)","poi":"Le Chalet Dalat"},
+      {"time":"16:00","type":"sight","text":"호수 자전거·오리배 체험","poi":"Hồ Xuân Hương Pedal Boat"},
+      {"time":"19:00","type":"food","text":"저녁: 남꽈 레스토랑 (Nam Quả)","poi":"Nhà hàng Nam Quả Đà Lạt"}
+    ],
+    "point":"일출의 구름바다 + 낮의 달랏 감성.",
+    "prep":"무이네 이동 대비 물·간식 챙기기.",
+    "map":[
+      {"name":"Cau Dat Tea Hill","cat":"sight","lat":11.8627,"lng":108.5521,"g":"Cầu Đất Farm"},
+      {"name":"Langbiang Mountain","cat":"sight","lat":12.0126,"lng":108.4470,"g":"Langbiang"},
+      {"name":"An Cafe","cat":"sight","lat":11.9429,"lng":108.4329,"g":"An Cafe Da Lat"},
+      {"name":"Le Chalet Dalat","cat":"food","lat":11.9403,"lng":108.4304,"g":"Le Chalet Dalat"},
+      {"name":"Ho Xuan Huong Lake (Boat)","cat":"sight","lat":11.9466,"lng":108.4430,"g":"Hồ Xuân Hương Pedal Boat"},
+      {"name":"Nam Qua Restaurant","cat":"food","lat":11.9396,"lng":108.4416,"g":"Nhà hàng Nam Quả Đà Lạt"}
+    ]
+  },
+  {
+    "id": "d4",
+    "date": "10월 7일 (화)",
+    "title": "달랏 → 무이네 해변 휴식",
+    "items": [
+      {"time":"08:00","type":"move","text":"FUTA 슬리핑버스 → 판티엣","poi":"FUTA Bus Lines Da Lat Office"},
+      {"time":"13:00","type":"move","text":"판티엣 도착 → 무이네 무료 셔틀 이동","poi":"Phan Thiet Bus Station"},
+      {"time":"14:00","type":"stay","text":"숙소 체크인 — Sailing Club Resort Mũi Né","poi":"Sailing Club Resort Mui Ne"},
+      {"time":"15:30","type":"free","text":"해변 산책 & 수영장","poi":"Mui Ne Beach"},
+      {"time":"18:30","type":"food","text":"저녁: 샌들스 레스토랑 (Sandals)","poi":"Sandals Restaurant Mui Ne"},
+      {"time":"20:00","type":"sight","text":"무이네 야시장 (Chợ đêm Mũi Né)","poi":"Mui Ne Night Market"}
+    ],
+    "point":"고원 → 바다로 리듬 전환.",
+    "prep":"지프투어 새벽 출발 가능성 → 알람·간식.",
+    "map":[
+      {"name":"Sailing Club Resort Mui Ne","cat":"stay","lat":10.9312,"lng":108.2876,"g":"Sailing Club Resort Mui Ne"},
+      {"name":"Sandals Restaurant","cat":"food","lat":10.9313,"lng":108.2877,"g":"Sandals Restaurant Mui Ne"},
+      {"name":"Mui Ne Night Market","cat":"sight","lat":10.9389,"lng":108.2722,"g":"Chợ đêm Mũi Né"}
+    ]
+  },
+  {
+    "id": "d5",
+    "date": "10월 8일 (수)",
+    "title": "무이네 지프투어 & 해변 자유",
+    "items": [
+      {"time":"04:30","type":"sight","text":"(옵션) 레드 샌드듄 일출 (Đồi cát đỏ)","poi":"Red Sand Dunes Mui Ne"},
+      {"time":"09:00","type":"sight","text":"지프투어 (화이트/레드 샌드듄 → 페어리 스트림 → 어촌 마을)","poi":"White Sand Dunes Mui Ne"},
+      {"time":"12:30","type":"food","text":"점심: 람통 씨푸드 (Lâm Tòng)","poi":"Lam Tong Restaurant Mui Ne"},
+      {"time":"14:00","type":"free","text":"리조트 휴식 (수영, 비치 타임)","poi":"Sailing Club Resort Mui Ne"},
+      {"time":"16:30","type":"sight","text":"응우옌딘치에우 거리 산책","poi":"Nguyen Dinh Chieu Mui Ne"},
+      {"time":"19:00","type":"food","text":"저녁: 가네시 인디안 레스토랑 (Ganesh)","poi":"Ganesh Indian Restaurant Mui Ne"}
+    ],
+    "point":"샌드듄·요정의샘·어촌 포인트 체험.",
+    "prep":"호치민 이동 대비 짐 정리.",
+    "map":[
+      {"name":"White Sand Dunes","cat":"sight","lat":11.1209,"lng":108.6011,"g":"Đồi cát trắng Mũi Né"},
+      {"name":"Red Sand Dunes","cat":"sight","lat":10.9804,"lng":108.2772,"g":"Đồi cát đỏ Mũi Né"},
+      {"name":"Fairy Stream (Suối Tiên)","cat":"sight","lat":10.9463,"lng":108.2689,"g":"Suối Tiên Mũi Né"},
+      {"name":"Mui Ne Fishing Village","cat":"sight","lat":10.9597,"lng":108.2895,"g":"Làng chài Mũi Né"},
+      {"name":"Lam Tong Seafood","cat":"food","lat":10.9316,"lng":108.2794,"g":"Lâm Tòng Restaurant"},
+      {"name":"Nguyen Dinh Chieu Street","cat":"sight","lat":10.9301,"lng":108.2838,"g":"Đường Nguyễn Đình Chiểu Mũi Né"},
+      {"name":"Ganesh Indian Restaurant Mui Ne","cat":"food","lat":10.9299,"lng":108.2869,"g":"Ganesh Indian Mui Ne"}
+    ]
+  },
+  {
+    "id": "d6",
+    "date": "10월 9일 (목)",
+    "title": "무이네 → 호치민 시내 탐방",
+    "items": [
+      {"time":"09:30","type":"move","text":"FUTA 슬리핑버스 → 호치민","poi":"FUTA Bus Lines Mui Ne Office"},
+      {"time":"15:30","type":"stay","text":"체크인 — Liberty Central Saigon Citypoint","poi":"Liberty Central Saigon Citypoint"},
+      {"time":"17:30","type":"sight","text":"벤탄시장 (Chợ Bến Thành)","poi":"Ben Thanh Market"},
+      {"time":"19:00","type":"food","text":"저녁: 꽌안 응온 (Quán Ăn Ngon)","poi":"Quán Ăn Ngon 138 Ly Tu Trong"}
+    ],
+    "point":"시장과 현지식으로 HCMC 적응.",
+    "prep":"내일 쇼핑 리스트 점검.",
+    "map":[
+      {"name":"Liberty Central Saigon Citypoint","cat":"stay","lat":10.7736,"lng":106.7018,"g":"Liberty Central Saigon Citypoint"},
+      {"name":"Ben Thanh Market","cat":"sight","lat":10.7723,"lng":106.6983,"g":"Chợ Bến Thành"},
+      {"name":"Quán Ăn Ngon 138","cat":"food","lat":10.7779,"lng":106.6903,"g":"Quán Ăn Ngon Lý Tự Trọng"}
+    ]
+  },
+  {
+    "id": "d7",
+    "date": "10월 10일 (금)",
+    "title": "호치민 쇼핑 & 마지막 만찬",
+    "items": [
+      {"time":"09:00","type":"sight","text":"사이공 스퀘어 (Saigon Square)","poi":"Saigon Square"},
+      {"time":"11:00","type":"sight","text":"빈컴센터 & 타카시마야","poi":"Vincom Center Đồng Khởi"},
+      {"time":"12:30","type":"food","text":"점심: 응온 레스토랑 (Ngon Restaurant)","poi":"Quán Ăn Ngon 138 Ly Tu Trong"},
+      {"time":"15:00","type":"free","text":"자유 일정 → Chill Skybar 또는 비텍스코 전망대","poi":"Bitexco Financial Tower Skydeck"},
+      {"time":"18:30","type":"food","text":"저녁: 더 덱 사이공 (The Deck Saigon)","poi":"The Deck Saigon"},
+      {"time":"21:00","type":"free","text":"자유시간 → 공항 이동 준비","poi":"Tan Son Nhat International Airport"}
+    ],
+    "point":"현대적 쇼핑 + 야경 + 마지막 만찬.",
+    "prep":"자정 출발 전 짐/여권 최종 점검.",
+    "map":[
+      {"name":"Saigon Square","cat":"sight","lat":10.7729,"lng":106.7030,"g":"Saigon Square"},
+      {"name":"Vincom Center Đồng Khởi","cat":"sight","lat":10.7775,"lng":106.7020,"g":"Vincom Center Đồng Khởi"},
+      {"name":"Takashimaya Saigon","cat":"sight","lat":10.7734,"lng":106.7013,"g":"Takashimaya Saigon"},
+      {"name":"Chill Skybar","cat":"free","lat":10.7725,"lng":106.7043,"g":"Chill Skybar"},
+      {"name":"Bitexco Financial Tower","cat":"free","lat":10.7710,"lng":106.7040,"g":"Bitexco Financial Tower Skydeck"},
+      {"name":"The Deck Saigon","cat":"food","lat":10.8008,"lng":106.7309,"g":"The Deck Saigon"}
+    ]
+  },
+  {
+    "id": "d8",
+    "date": "10월 11일 (토)",
+    "title": "귀국",
+    "items": [
+      {"time":"00:05","type":"move","text":"호치민 출발","poi":"Tan Son Nhat International Airport"},
+      {"time":"07:10","type":"move","text":"인천 도착","poi":"Incheon International Airport"}
+    ],
+    "point":"귀국 및 일정 종료.",
+    "prep":"분실물 최종 점검.",
+    "map":[]
+  }
+]
