@@ -10,7 +10,7 @@ const tagLabel  = (t)=> TAG_LABEL[t] || t;
 const pinColor  = (c)=> PIN_COLOR[c] || "#8b5cf6";
 const gmapsSearch = (q)=> `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 
-/** 구글 지도에서 오늘 일정(출발-경유-도착) 바로 열기용 링크 생성 */
+/** 구글 지도에서 오늘 일정(출발-경유-도착) 바로 열기용 링크 */
 function gmapsDayRoute(points){
   const P = (points||[]).map(p=>p.g).filter(Boolean);
   if(P.length===0) return '';
@@ -26,11 +26,11 @@ function gmapsDayRoute(points){
 /* ===================== 상태 ===================== */
 let PLAN = []; // schedule.json에서 로드
 const mapCache   = {}; // dayId -> L.Map
-const layerCache = {}; // dayId -> { groups, poly, bounds }
+const layerCache = {}; // dayId -> { groups, bounds }
 
 /* ===================== 렌더 ===================== */
 function makeItemHTML(it, day){
-  // 개별 장소 "📍 지도" 버튼 만들기: 1) poi 2) (괄호) 3) day.map 매칭
+  // 개별 장소 "📍 지도" 버튼: 1) poi 2) (괄호) 3) day.map 매칭
   let q = it.poi || '';
   if(!q){
     const m = (it.text||'').match(/\(([^)]+)\)/);
@@ -58,7 +58,7 @@ function makeDayCard(d, idx){
   const el = document.createElement('section');
   el.className = 'day'; el.id = d.id;
 
-  // 오늘 표시(브라우저 날짜 기준) — 필요 없으면 제거 가능
+  // 오늘 표시(브라우저 날짜 기준) — 필요 시 조정
   const t = new Date();
   if(t.getFullYear()===2025 && (t.getMonth()+1)===10 && t.getDate()===(4+idx)){
     el.classList.add('is-today');
@@ -66,7 +66,7 @@ function makeDayCard(d, idx){
 
   const itemsHTML = (d.items||[]).map(it=>makeItemHTML(it, d)).join('');
 
-  // 좌표가 1개 이상 있을 때만 지도 섹션/버튼을 노출(빈 지도 제거)
+  // ✅ 유효 좌표가 있는 날만 지도 섹션/버튼 노출 (빈 지도 제거)
   const hasMap = Array.isArray(d.map) && d.map.some(p => Number.isFinite(p.lat) && Number.isFinite(p.lng));
 
   const mapSection = hasMap ? `
@@ -172,7 +172,7 @@ function initMap(dayId){
 
 /* ===================== 이벤트(위임) ===================== */
 document.addEventListener('click', (e)=>{
-  // 오늘 지도 보기: 열자마자 init + 경로맞춤
+  // 오늘 지도 보기: 열자마자 init + 경로맞춤(1프레임 지연)
   const t1 = e.target.closest('[data-map-toggle]');
   if(t1){
     const id = t1.getAttribute('data-map-toggle');
@@ -181,24 +181,28 @@ document.addEventListener('click', (e)=>{
     box.style.display = isOpen ? 'none' : 'block';
     if(!isOpen){
       initMap(id);
-      const Ls = layerCache[id];
-      if(Ls && Ls.bounds && Ls.bounds.length){
-        mapCache[id].fitBounds(Ls.bounds, {padding:[20,20]});
-      }
+      requestAnimationFrame(()=>{
+        const Ls = layerCache[id];
+        if(Ls && Ls.bounds && Ls.bounds.length){
+          mapCache[id].fitBounds(Ls.bounds, {padding:[20,20]});
+        }
+      });
     }
     return;
   }
 
-  // 화면을 경로에 맞추기(기존 ‘루트 맞춰 보기’ 기능과 동일)
+  // 화면을 경로에 맞추기(지도가 닫혀 있으면 펼치고 → 맞춤)
   const t2 = e.target.closest('[data-fit]');
   if(t2){
     const id = t2.getAttribute('data-fit');
     const box = document.getElementById('map-'+id);
     if(box.style.display==='none'){ box.style.display='block'; initMap(id); }
-    const Ls = layerCache[id];
-    if(Ls && Ls.bounds && Ls.bounds.length){
-      mapCache[id].fitBounds(Ls.bounds, {padding:[20,20]});
-    }
+    requestAnimationFrame(()=>{
+      const Ls = layerCache[id];
+      if(Ls && Ls.bounds && Ls.bounds.length){
+        mapCache[id].fitBounds(Ls.bounds, {padding:[20,20]});
+      }
+    });
     return;
   }
 
